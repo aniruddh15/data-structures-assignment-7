@@ -1,0 +1,150 @@
+//Author: Aniruddh Kathiriya
+//Assignment 7
+#include <cassert>  // Provides assert
+
+
+template <class Item>
+deque<Item>::deque( )
+{
+	first=NULL;
+	last=NULL;
+	count=0;
+}
+
+template <class Item>
+deque<Item>::~deque(){
+	list_clear(first);
+}
+
+template <class Item>
+deque<Item>::deque(const deque<Item>& dq){
+	list_copy(dq.first,first,last);
+	count=dq.count;
+}
+
+template <class Item>
+deque<Item>& deque<Item>::operator = (const deque<Item>& dq){
+		if (this == &dq)
+            return *this;
+		
+		list_clear(first);
+		list_copy(dq.first,first,last);
+		count=dq.count;
+		return *this;
+}
+
+template <class Item>
+void deque<Item>::pop_back( )
+{
+	assert(!empty( ));
+	if(size()!=1){
+		last=list_locate(first,size()-1);
+		list_remove(last);
+	}else{
+		list_head_remove(first);
+		last=NULL;
+	}
+	
+	--count;
+}
+
+template <class Item>
+void deque<Item>::pop_front( )
+{
+	assert(!empty( ));
+	list_head_remove(first);
+	--count; 		
+}
+
+template <class Item>
+void deque<Item>::push_front(const Item& entry)
+{
+	list_head_insert(first,entry);
+	++count;
+	if(count==1){
+	last=first;
+	}
+}
+
+template <class Item>
+void deque<Item>::push_back(const Item& entry)
+{
+		if(count==0){
+			list_head_insert(first,entry);
+			last=first;
+		}else{
+			list_insert(last,entry);
+			last=last->link();
+		}
+		++count;
+
+}
+
+
+
+template <class Item>
+Item deque<Item>::front( ) const
+{
+	assert(!empty( ));
+	return first->data();
+}
+
+template <class Item>
+Item& deque<Item>::front( )
+{
+	assert(!empty( ));
+	return first->data();
+}	
+
+template <class Item>
+Item& deque<Item>::back( )
+{
+	assert(!empty( ));
+	return last->data();
+}
+
+template <class Item>
+Item deque<Item>::back( ) const
+{
+	assert(!empty( ));
+	return last->data();
+}
+
+template <class Item>
+size_t deque<Item>::size() const{
+	return count;
+}
+
+template <class Item>
+bool deque<Item>::empty() const{
+	return count==0;
+}
+
+template <class U>
+std::ostream& operator << (std::ostream& out, const deque<U>& dq){
+	node<U> *index=dq.first;
+	for(size_t i=0; i<dq.size(); i++){
+		out<<index->data()<<" ";
+		index=index->link();
+	}
+	out<<std::endl;
+	return out;
+}
+
+template <class U>
+bool operator == (const deque<U>& dq1, const deque<U>& dq2){
+	if (dq1.size()!=dq2.size()) return false;
+	U size=dq1.size();
+	node<U> *dq1Index=dq1.first;
+	node<U> *dq2Index=dq2.first;
+	while(size>0){
+		if(dq1Index->data()!=dq2Index->data()){
+		return false;
+	}
+	dq1Index=dq1Index->link();
+	dq2Index=dq2Index->link();
+	size--;
+	}
+return true;
+}
+
